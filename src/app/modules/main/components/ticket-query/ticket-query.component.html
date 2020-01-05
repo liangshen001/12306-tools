@@ -1,0 +1,217 @@
+<form [formGroup]="form" (ngSubmit)="search()" novalidate>
+    <input type="hidden" formControlName="leftTicketDTO.from_station" required>
+    <input type="hidden" formControlName="leftTicketDTO.to_station" required>
+    <mat-form-field>
+        <input type="text" matInput placeholder="起始站" [formControl]="fromStationInput" required [matAutocomplete]="fromStationAutoGroup">
+        <mat-autocomplete #fromStationAutoGroup="matAutocomplete">
+            <mat-optgroup *ngFor="let group of fromStationGroupOptions | async" [label]="group.label">
+                <mat-option *ngFor="let station of group.stations" [value]="station.name" (onSelectionChange)="selectStation('leftTicketDTO.from_station', station)">
+                    {{station.name}}
+                </mat-option>
+            </mat-optgroup>
+        </mat-autocomplete>
+    </mat-form-field>
+    <mat-form-field>
+        <input type="text" matInput placeholder="终点站" [formControl]="toStationInput" required [matAutocomplete]="toStationAutoGroup">
+        <mat-autocomplete #toStationAutoGroup="matAutocomplete">
+            <mat-optgroup *ngFor="let group of toStationGroupOptions | async" [label]="group.label">
+                <mat-option *ngFor="let station of group.stations" [value]="station.name" (onSelectionChange)="selectStation('leftTicketDTO.to_station', station)">
+                    {{station.name}}
+                </mat-option>
+            </mat-optgroup>
+        </mat-autocomplete>
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [matDatepicker]="picker" formControlName="leftTicketDTO.train_date" placeholder="时间" disabled required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker disabled="false"></mat-datepicker>
+    </mat-form-field>
+    <button mat-button type="submit" class="sure">查询</button>
+</form>
+<mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows matSort class="mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- 车次 -->
+    <ng-container matColumnDef="train" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 车次 </th>
+        <td mat-cell *matCellDef="let element"> {{element.train}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fromAndToStationName" sticky>
+        <th mat-header-cell *matHeaderCellDef> 出发站<br>到达站 </th>
+        <td mat-cell *matCellDef="let element"> {{element.fromStationName}}<br>{{element.toStationName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fromAndToStationTime" sticky>
+        <th mat-header-cell *matHeaderCellDef> 出发时间<br>到达时间 </th>
+        <td mat-cell *matCellDef="let element"> {{element.fromStationTime}}<br>{{element.toStationTime}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="take" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 历时 </th>
+        <td mat-cell *matCellDef="let element"> {{element.take}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="businessClass">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 商务座<br>特等座 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.businessClass | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="firstClass">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 一等座 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.firstClass | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="secondClass">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 二等座 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.secondClass | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="advancedSoftSleeper">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 高级<br>软卧 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.advancedSoftSleeper | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="softSleeper">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 软卧<br>一等卧 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.softSleeper | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="moveSleeper">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 动卧 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.moveSleeper | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="hardSleeper">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 硬卧<br>二等卧 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.hardSleeper | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="softClass">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 软座 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.softClass | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="hardClass">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 硬座 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.hardClass | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="noSeat">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 无座 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.noSeat | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="others">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> 其它 </th>
+        <td mat-cell *matCellDef="let element"> <div [innerHTML]="element.others | seatStatusColor"></div> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="remarks">
+        <th mat-header-cell *matHeaderCellDef> 备注 </th>
+        <td mat-cell *matCellDef="let element"> {{element.remarks}}</td><!--element.remarks-->
+    </ng-container>
+
+
+    <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="4">
+            <div class="example-element-detail">
+                {{element?.price?.F}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="businessClassPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+                {{element?.price?.A9}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="firstClassPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+                {{element?.price?.M}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="secondClassPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+                {{element?.price?.O}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="advancedSoftSleeperPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+                {{element?.price?.A6}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="softSleeperPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+                {{element?.price?.A4}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="moveSleeperPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="hardSleeperPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+                {{element?.price?.A3}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="softClassPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+                {{element?.price?.A2}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="hardClassPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+                {{element?.price?.A1}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="noSeatPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+                {{element?.price?.WZ}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="othersPrice">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="expandedDetail1">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="1">
+            <div class="example-element-detail">
+            </div>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
+    <tr mat-row *matRowDef="let element; columns: displayedColumns;"
+        class="example-element-row"
+        [class.example-expanded-row]="element.expanded"
+        (click)="clickRow(element)"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail', 'businessClassPrice', 'firstClassPrice', 'secondClassPrice', 'advancedSoftSleeperPrice', 'softSleeperPrice', 'moveSleeperPrice', 'hardSleeperPrice', 'softClassPrice', 'hardClassPrice', 'noSeatPrice', 'othersPrice', 'expandedDetail1']" class="example-detail-row" [@detailExpand]="row.expanded ? 'expanded' : 'collapsed'">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="12">
+<!--            {{element | json}}-->
+        </td>
+    </tr>
+</table>
