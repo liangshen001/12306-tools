@@ -6,7 +6,7 @@ import {QueryTicketPriceResult} from '../beans/query-ticket-price.result';
 @Injectable()
 export class LeftTicketQueryTicketPriceApi extends HttpGetApi<QueryTicketPriceParams, QueryTicketPriceResult> {
 
-    url = '//kyfw.12306.cn/otn/leftTicket/queryTicketPrice';
+    url = 'https://kyfw.12306.cn/otn/leftTicket/queryTicketPrice';
     convertResult(result: QueryTicketPriceResult): QueryTicketPriceResult {
         return result;
     }

@@ -8,7 +8,7 @@ import {Injectable} from '@angular/core';
  */
 @Injectable()
 export class LeftTicketQueryZApi extends HttpGetApi<any, TicketBo[]> {
-    url = '//kyfw.12306.cn/otn/leftTicket/queryZ';
+    url = 'https://kyfw.12306.cn/otn/leftTicket/queryZ';
     convertParams(params: any): {
         'leftTicketDTO.train_date': string;
         'leftTicketDTO.from_station': string;

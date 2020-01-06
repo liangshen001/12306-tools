@@ -9,7 +9,7 @@ export class QueryTicketPriceFLApi extends HttpGetApi<any, any> {
         super();
     }
 
-    url = '//kyfw.12306.cn/otn/leftTicket/queryTicketPriceFL';
+    url = 'https://kyfw.12306.cn/otn/leftTicket/queryTicketPriceFL';
 
     convertParams(params: any): any {
         return this.queryTicketPriceApi.convertParams(params);

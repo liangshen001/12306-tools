@@ -9,7 +9,7 @@
         "start": "ng serve --port 4200",
         "build": "ng build",
         "ngx-electron:server-start": "ngx-electron server-start . --hmr --host 127.0.0.1",
-        "ngx-electron:local-start": "ngx-electron local-start ",
+        "ngx-electron:local-start": "ngx-electron local-start .",
         "ngx-electron:build:win": "ngx-electron build . -w --configuration production",
         "ngx-electron:build:mac": "ngx-electron build . -m --configuration production",
         "ngx-electron:build:linux": "ngx-electron build . -l --configuration production",
@@ -37,12 +37,12 @@
         "moment": "^2.24.0",
         "rxjs": "~6.4.0",
         "tslib": "^1.10.0",
+        "electron-reload": "^1.5.0",
+        "electron-updater": "^4.2.0",
         "zone.js": "~0.9.1"
     },
     "devDependencies": {
         "electron": "^7.1.7",
-        "electron-reload": "^1.5.0",
-        "electron-updater": "^4.2.0",
         "@ngx-electron/store": "8.7.2",
         "@ngx-electron/core": "8.7.2",
         "@ngx-electron/cli": "8.7.2",
