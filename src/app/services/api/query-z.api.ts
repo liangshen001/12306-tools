@@ -1,6 +1,6 @@
 import {Api, HttpGetApi} from './api';
-import {TicketZResult} from '../../beans/ticket-bo';
 import {Injectable} from '@angular/core';
+import {TicketZResult} from '../../models/ticket-z.result';
 
 
 /**
