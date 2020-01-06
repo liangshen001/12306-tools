@@ -1,8 +1,11 @@
-import {Api, HttpGetApi} from './api';
+import {HttpGetApi} from './api';
 import {Injectable} from '@angular/core';
 import {QueryTicketPriceParams} from '../../beans/query-ticket-price.params';
 import {QueryTicketPriceResult} from '../../beans/query-ticket-price.result';
 
+/**
+ * 查询票价
+ */
 @Injectable()
 export class QueryTicketPriceApi extends HttpGetApi<QueryTicketPriceParams, QueryTicketPriceResult> {
     constructor() {

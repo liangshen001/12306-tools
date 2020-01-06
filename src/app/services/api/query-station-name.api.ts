@@ -2,12 +2,16 @@ import {Api, ScriptApi} from './api';
 import {Station} from '../../modules/main/beans/station';
 
 declare const station_names: string;
+
+/**
+ * 获取车站列表
+ */
 export class QueryStationNameApi extends ScriptApi<void, Station[]> {
     constructor() {
         super('https://kyfw.12306.cn/otn/resources/js/framework/station_name.js');
     }
 
-    convertParams(params: void): any {
+    convertParams(): any {
         return {
             station_version: '1.9139'
         };
