@@ -15,9 +15,9 @@ export class QueryTicketPriceFLApi extends HttpGetApi<any, any> {
     convertParams(params: any): any {
         return this.queryTicketPriceApi.convertParams(params);
     }
-
-    convertResult(result?: any): any {
-        return null;
+    // 此接口会返回null 作用不明
+    convertResult(result: any): any {
+        return result;
     }
 
 }
