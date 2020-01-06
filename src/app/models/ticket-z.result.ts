@@ -1,4 +1,4 @@
-export class TicketBo {
+export class TicketZResult {
     train: string;
     fromStationName: string;
     fromStation: string;

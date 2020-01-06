@@ -3,9 +3,8 @@ import {ApiService} from '../../../../services/api.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
-import {Station} from '../../beans/station';
-import {StationGroup} from '../../beans/station-group';
-import {TicketBo} from '../../../../beans/ticket-bo';
+import {StationResult} from '../../../../models/station.result';
+import {StationGroup} from '../../models/station-group';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import * as moment from 'moment';
 import {MatSort, MatTableDataSource} from '@angular/material';
@@ -14,9 +13,10 @@ import {QueryTicketPriceApi} from '../../../../services/api/query-ticket-price.a
 import {QueryTicketPriceFLApi} from '../../../../services/api/query-ticket-price-f-l.api';
 import {QueryStationNameApi} from '../../../../services/api/query-station-name.api';
 import {CaptchaImage64Api} from '../../../../services/api/captcha-image64.api';
+import {TicketZResult} from '../../../../models/ticket-z.result';
 
 
-export const _filter = (opt: Station[], value: string): Station[] => {
+export const _filter = (opt: StationResult[], value: string): StationResult[] => {
     const filterValue = value.toLowerCase();
     return opt.filter(item => item.name.toLowerCase().includes(filterValue) ||
         item.simpleSpell.toLowerCase().includes(filterValue) || item.spell.toLowerCase().includes(filterValue));
@@ -54,6 +54,7 @@ export class TicketQueryComponent implements OnInit {
     sort: MatSort;
 
     loading: boolean;
+
     constructor(private apiService: ApiService,
                 private changeDetectorRef: ChangeDetectorRef,
                 private queryZApi: QueryZApi,
@@ -144,11 +145,11 @@ export class TicketQueryComponent implements OnInit {
 
     }
 
-    selectStation(key: string, station: Station) {
+    selectStation(key: string, station: StationResult) {
         this.form.controls[key].setValue(station.code);
     }
 
-    clickRow(element: TicketBo) {
+    clickRow(element: TicketZResult) {
         if (!element['expanded']) {
             if (element['price']) {
                 element['expanded'] = true;

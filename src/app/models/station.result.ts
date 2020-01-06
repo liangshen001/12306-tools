@@ -1,5 +1,5 @@
 
-export interface Station {
+export interface StationResult {
     name: string;
     code: string;
     spell: string;

@@ -1,12 +1,12 @@
 import {Api, ScriptApi} from './api';
-import {Station} from '../../modules/main/beans/station';
+import {StationResult} from '../../models/station.result';
 
 declare const station_names: string;
 
 /**
  * 获取车站列表
  */
-export class QueryStationNameApi extends ScriptApi<void, Station[]> {
+export class QueryStationNameApi extends ScriptApi<void, StationResult[]> {
     constructor() {
         super('https://kyfw.12306.cn/otn/resources/js/framework/station_name.js');
     }
@@ -17,7 +17,7 @@ export class QueryStationNameApi extends ScriptApi<void, Station[]> {
         };
     }
 
-    convertResult(): Station[] {
+    convertResult(): StationResult[] {
         let stationStrs = station_names.split('@');
         return stationStrs.filter(item => !!item)
             .map(item => {
