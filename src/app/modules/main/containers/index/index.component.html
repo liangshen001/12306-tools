@@ -3,7 +3,7 @@
 <ngx-electron-window [showCloseBtn]="true" [showMiniBtn]="true" [background]="'white'">
     <div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
         <mat-toolbar color="primary" class="example-toolbar " style="-webkit-app-region: drag;">
-            <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+            <button mat-icon-button (click)="snav.toggle()" style="-webkit-app-region: no-drag;"><mat-icon style="-webkit-app-region: no-drag;">menu</mat-icon></button>
             <h1 class="example-app-name">App</h1>
         </mat-toolbar>
 

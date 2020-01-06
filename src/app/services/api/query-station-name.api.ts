@@ -1,9 +1,22 @@
-import {Api, ScriptApi} from '../beans/api';
-import {Station} from '../modules/main/beans/station';
+import {Api, ScriptApi} from './api';
+import {Station} from '../../modules/main/beans/station';
 
 declare const station_names: string;
+
+/**
+ * 获取车站列表
+ */
 export class QueryStationNameApi extends ScriptApi<void, Station[]> {
-    url = 'https://kyfw.12306.cn/otn/resources/js/framework/station_name.js?station_version=1.9139';
+    constructor() {
+        super('https://kyfw.12306.cn/otn/resources/js/framework/station_name.js');
+    }
+
+    convertParams(): any {
+        return {
+            station_version: '1.9139'
+        };
+    }
+
     convertResult(): Station[] {
         let stationStrs = station_names.split('@');
         return stationStrs.filter(item => !!item)

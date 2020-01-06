@@ -10,7 +10,7 @@ import {EffectsModule} from '@ngrx/effects';
 import {metaReducers, reducers} from './reducers';
 import {effects} from './effects';
 import {ApiService} from './services/api.service';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CommonInterceptor} from './common-interceptor';
 import {ScriptService} from './services/script.service';
@@ -50,10 +50,11 @@ import {
 } from '@angular/material';
 import {PortalModule} from '@angular/cdk/portal';
 import {ScrollingModule} from '@angular/cdk/scrolling';
-import {LeftTicketQueryZApi} from './services/left-ticket-query-z.api';
-import {LeftTicketQueryTicketPriceApi} from './services/left-ticket-query-ticket-price.api';
-import {QueryStationNameApi} from './services/query-station-name.api';
-import {QueryTicketPriceFLApi} from './services/query-ticket-price-f-l.api';
+import {QueryZApi} from './services/api/query-z.api';
+import {QueryTicketPriceApi} from './services/api/query-ticket-price.api';
+import {QueryStationNameApi} from './services/api/query-station-name.api';
+import {QueryTicketPriceFLApi} from './services/api/query-ticket-price-f-l.api';
+import {CaptchaImage64Api} from './services/api/captcha-image64.api';
 
 
 export const materialModules = [
@@ -109,6 +110,7 @@ export const materialModules = [
         BrowserAnimationsModule,
         AppRoutingModule,
         HttpClientModule,
+        HttpClientJsonpModule,
         ...materialModules,
         NgxElectronCoreModule.forRoot(),
         NgxElectronStoreModule.forRoot(),
@@ -125,10 +127,11 @@ export const materialModules = [
     providers: [
         ApiService,
         ScriptService,
-        LeftTicketQueryZApi,
-        LeftTicketQueryTicketPriceApi,
+        QueryZApi,
+        QueryTicketPriceApi,
         QueryStationNameApi,
         QueryTicketPriceFLApi,
+        CaptchaImage64Api,
         {provide: HTTP_INTERCEPTORS, useClass: CommonInterceptor, multi: true}
     ],
     bootstrap: [AppComponent]
