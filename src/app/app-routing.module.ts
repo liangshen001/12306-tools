@@ -16,6 +16,9 @@ const routes: Routes = [
   }, {
     path: 'main',
     loadChildren: './modules/main/main.module#MainModule'
+  }, {
+    path: 'verification-code',
+    loadChildren: './modules/verification-code/verification-code.module#VerificationCodeModule'
   }
 ];
 

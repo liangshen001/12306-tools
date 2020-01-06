@@ -14,6 +14,7 @@ import {QueryTicketPriceFLApi} from '../../../../services/api/query-ticket-price
 import {QueryStationNameApi} from '../../../../services/api/query-station-name.api';
 import {CaptchaImage64Api} from '../../../../services/api/captcha-image64.api';
 import {TicketZResult} from '../../../../models/ticket-z.result';
+import {NgxElectronService} from '@ngx-electron/core';
 
 
 export const _filter = (opt: StationResult[], value: string): StationResult[] => {
@@ -56,6 +57,7 @@ export class TicketQueryComponent implements OnInit {
     loading: boolean;
 
     constructor(private apiService: ApiService,
+                private ngxElectronService: NgxElectronService,
                 private changeDetectorRef: ChangeDetectorRef,
                 private queryZApi: QueryZApi,
                 private queryTicketPriceApi: QueryTicketPriceApi,
@@ -66,11 +68,12 @@ export class TicketQueryComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.apiService.request({
-            api: this.captchaImage64Api
-        }).subscribe(data => {
-            debugger;
+        let win = this.ngxElectronService.createWindow('verification-code', 'verification-code', {
+            width: 300,
+            height: 200,
+            title: '验证码'
         });
+
         this.dataSource.sort = this.sort;
         this.apiService.request({
             api: this.queryStationNameApi

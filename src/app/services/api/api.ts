@@ -54,8 +54,5 @@ export abstract class JSONPApi<P, R> extends Api<P, void, R> {
     }
     convertBody() {
     }
-    abstract convertParams(params: P): {
-        callback: string;
-    };
     abstract convertResult(result: any): R;
 }

@@ -1,24 +1,24 @@
 import {JSONPApi} from './api';
+import {CaptchaImage64Result} from '../../models/captcha-image-64.result';
 
 /**
  * 12306图片验证码接口
  */
-export class CaptchaImage64Api extends JSONPApi<void, any> {
+export class CaptchaImage64Api extends JSONPApi<void, CaptchaImage64Result> {
 
     constructor() {
         super('https://kyfw.12306.cn/passport/captcha/captcha-image64');
     }
 
-    convertParams(params: void): { callback: string } | any {
+    convertParams(): any {
         return {
             'login_site': 'E',
             'module': 'login',
             'rand': 'sjrand',
-            'callback': 'jQuery19106672487849504936_1578282339387',
             '_': '1578282339388'
         };
     }
-    convertResult(result: any): any {
+    convertResult(result: CaptchaImage64Result): CaptchaImage64Result {
         return result;
     }
 }

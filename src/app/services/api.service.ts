@@ -33,7 +33,6 @@ export class ApiService {
     }): Observable<R> {
         if (option.api.type === 'get' || option.api.type === 'post') {
             let observable: Observable<BaseResponse<R>>;
-
             if (option.api.type === 'get') {
                 observable = this.httpClient.get<BaseResponse<R>>(option.api.url, {
                     ...option.params ? {
@@ -79,7 +78,10 @@ export class ApiService {
                         url += '&';
                     }
                 }
-                Object.keys(params).forEach(key => url += key + '=' + params[key] + '&');
+                Object.keys(params).forEach(key => {
+                    url += key + '=' + params[key] + '&';
+                });
+                url = url.slice(0, -1);
             }
             if (option.api.type === 'script') {
                 return this.scriptService.loadScript(url)
@@ -92,7 +94,7 @@ export class ApiService {
                         })
                     );
             } else if (option.api.type === 'jsonp') {
-                return this.httpClient.jsonp<R>(url, params['callback']);
+                return this.httpClient.jsonp<R>(url, 'callback');
             }
         }
     }
