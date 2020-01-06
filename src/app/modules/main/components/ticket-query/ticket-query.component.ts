@@ -9,6 +9,11 @@ import {TicketBo} from '../../../../beans/ticket-bo';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import * as moment from 'moment';
 import {MatSort, MatTableDataSource} from '@angular/material';
+import {QueryZApi} from '../../../../services/api/query-z.api';
+import {QueryTicketPriceApi} from '../../../../services/api/query-ticket-price.api';
+import {QueryTicketPriceFLApi} from '../../../../services/api/query-ticket-price-f-l.api';
+import {QueryStationNameApi} from '../../../../services/api/query-station-name.api';
+import {CaptchaImage64Api} from '../../../../services/api/captcha-image64.api';
 
 
 export const _filter = (opt: Station[], value: string): Station[] => {
@@ -51,12 +56,24 @@ export class TicketQueryComponent implements OnInit {
     loading: boolean;
     constructor(private apiService: ApiService,
                 private changeDetectorRef: ChangeDetectorRef,
+                private queryZApi: QueryZApi,
+                private queryTicketPriceApi: QueryTicketPriceApi,
+                private queryTicketPriceFLApi: QueryTicketPriceFLApi,
+                private queryStationNameApi: QueryStationNameApi,
+                private captchaImage64Api: CaptchaImage64Api,
                 private _formBuilder: FormBuilder) {
     }
 
     ngOnInit() {
+        this.apiService.request({
+            api: this.captchaImage64Api
+        }).subscribe(data => {
+            debugger;
+        });
         this.dataSource.sort = this.sort;
-        this.apiService.loadStations().subscribe(stations => {
+        this.apiService.request({
+            api: this.queryStationNameApi
+        }).subscribe(stations => {
             let group = stations.reduce((previousValue, currentValue) => {
                 let groupLabel = currentValue.spell.substr(0, 1);
                 if (!previousValue[groupLabel]) {
@@ -115,7 +132,11 @@ export class TicketQueryComponent implements OnInit {
             'leftTicketDTO.to_station': this.form.getRawValue()['leftTicketDTO.to_station'],
             'purpose_codes': 'ADULT'
         };
-        this.apiService.queryZ(params).subscribe((data) => {
+
+        return this.apiService.request({
+            api: this.queryZApi,
+            params
+        }).subscribe((data) => {
             localStorage.setItem('TicketQueryComponent-params', JSON.stringify(params));
             this.dataSource.data = data;
             this.loading = false;
@@ -139,8 +160,14 @@ export class TicketQueryComponent implements OnInit {
                     toStationNo: element.toStationNo,
                     seatTypes: element.seatTypes
                 };
-                this.apiService.queryTicketPriceFL(params).subscribe();
-                this.apiService.queryTicketPrice(params).subscribe(data => {
+                this.apiService.request({
+                    api: this.queryTicketPriceFLApi,
+                    params
+                }).subscribe();
+                this.apiService.request({
+                    api: this.queryTicketPriceApi,
+                    params
+                }).subscribe(data => {
                     element['price'] = data;
                     element['expanded'] = true;
                 });

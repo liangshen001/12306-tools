@@ -1,12 +1,13 @@
-import {Api, HttpGetApi} from '../beans/api';
+import {Api, HttpGetApi} from './api';
 import {Injectable} from '@angular/core';
-import {QueryTicketPriceParams} from '../beans/query-ticket-price.params';
-import {QueryTicketPriceResult} from '../beans/query-ticket-price.result';
+import {QueryTicketPriceParams} from '../../beans/query-ticket-price.params';
+import {QueryTicketPriceResult} from '../../beans/query-ticket-price.result';
 
 @Injectable()
-export class LeftTicketQueryTicketPriceApi extends HttpGetApi<QueryTicketPriceParams, QueryTicketPriceResult> {
-
-    url = '//kyfw.12306.cn/otn/leftTicket/queryTicketPrice';
+export class QueryTicketPriceApi extends HttpGetApi<QueryTicketPriceParams, QueryTicketPriceResult> {
+    constructor() {
+        super('https://kyfw.12306.cn/otn/leftTicket/queryTicketPrice');
+    }
     convertResult(result: QueryTicketPriceResult): QueryTicketPriceResult {
         return result;
     }

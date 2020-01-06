@@ -1,5 +1,5 @@
-import {Api, HttpGetApi} from '../beans/api';
-import {TicketBo} from '../beans/ticket-bo';
+import {Api, HttpGetApi} from './api';
+import {TicketBo} from '../../beans/ticket-bo';
 import {Injectable} from '@angular/core';
 
 
@@ -7,8 +7,12 @@ import {Injectable} from '@angular/core';
  * 查询车票接口定义
  */
 @Injectable()
-export class LeftTicketQueryZApi extends HttpGetApi<any, TicketBo[]> {
-    url = '//kyfw.12306.cn/otn/leftTicket/queryZ';
+export class QueryZApi extends HttpGetApi<any, TicketBo[]> {
+
+    constructor() {
+        super('https://kyfw.12306.cn/otn/leftTicket/queryZ');
+    }
+
     convertParams(params: any): {
         'leftTicketDTO.train_date': string;
         'leftTicketDTO.from_station': string;
@@ -17,6 +21,7 @@ export class LeftTicketQueryZApi extends HttpGetApi<any, TicketBo[]> {
     } {
         return params;
     }
+
     convertResult(data: {
         flag: string;
         map: any;
