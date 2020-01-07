@@ -55,6 +55,10 @@ import {QueryTicketPriceApi} from './services/api/query-ticket-price.api';
 import {QueryStationNameApi} from './services/api/query-station-name.api';
 import {QueryTicketPriceFLApi} from './services/api/query-ticket-price-f-l.api';
 import {CaptchaImage64Api} from './services/api/captcha-image64.api';
+import {LoginConfApi} from './services/api/login-conf.api';
+import {LeftTicketInitApi} from './services/api/left-ticket-init.api';
+import {GetLoginBannerApi} from './services/api/get-login-banner.api';
+import {CookieModule} from 'ngx-cookie';
 
 
 export const materialModules = [
@@ -122,6 +126,7 @@ export const materialModules = [
             }
         }),
         EffectsModule.forRoot(effects),
+        CookieModule.forRoot(),
         BrowserAnimationsModule
     ],
     providers: [
@@ -132,6 +137,9 @@ export const materialModules = [
         QueryStationNameApi,
         QueryTicketPriceFLApi,
         CaptchaImage64Api,
+        LoginConfApi,
+        LeftTicketInitApi,
+        GetLoginBannerApi,
         {provide: HTTP_INTERCEPTORS, useClass: CommonInterceptor, multi: true}
     ],
     bootstrap: [AppComponent]

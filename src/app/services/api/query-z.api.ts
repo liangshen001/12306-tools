@@ -1,6 +1,7 @@
 import {Api, HttpGetApi} from './api';
 import {Injectable} from '@angular/core';
 import {TicketZResult} from '../../models/ticket-z.result';
+import {BaseResponse} from '../../models/base-response';
 
 
 /**
@@ -22,19 +23,19 @@ export class QueryZApi extends HttpGetApi<any, TicketZResult[]> {
         return params;
     }
 
-    convertResult(data: {
+    convertResult(res: BaseResponse<{
         flag: string;
         map: any;
         result: string[];
-    }): TicketZResult[] {
-        return data.result.map(item => {
+    }>): TicketZResult[] {
+        return res.data.result.map(item => {
             let arr = item.split('|');
             let trainDate = arr[13].substr(0, 4) + '-' + arr[13].substr(4, 2) + '-' + arr[13].substr(6);
             return {
                 train: arr[3],
-                fromStationName: data.map[arr[6]],
+                fromStationName: res.data.map[arr[6]],
                 fromStation: arr[6],
-                toStationName: data.map[arr[7]],
+                toStationName: res.data.map[arr[7]],
                 toStation: arr[7],
                 fromStationTime: arr[8],
                 toStationTime: arr[9],

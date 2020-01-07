@@ -7,10 +7,6 @@ import {NgxElectronService} from '@ngx-electron/core';
 import {BaseResponse} from '../models/base-response';
 import {MatSnackBar} from '@angular/material';
 import {Api} from './api/api';
-import {QueryZApi} from './api/query-z.api';
-import {QueryTicketPriceApi} from './api/query-ticket-price.api';
-import {QueryStationNameApi} from './api/query-station-name.api';
-import {QueryTicketPriceFLApi} from './api/query-ticket-price-f-l.api';
 
 
 
@@ -19,10 +15,6 @@ export class ApiService {
     constructor(private httpClient: HttpClient,
                 private ngxElectronService: NgxElectronService,
                 private snackBar: MatSnackBar,
-                private leftTicketQueryZApi: QueryZApi,
-                private leftTicketQueryTicketPriceApi: QueryTicketPriceApi,
-                private queryStationNameApi: QueryStationNameApi,
-                private queryTicketPriceFLApi: QueryTicketPriceFLApi,
                 private scriptService: ScriptService) {
     }
 
@@ -32,40 +24,30 @@ export class ApiService {
         body?: B;
     }): Observable<R> {
         if (option.api.type === 'get' || option.api.type === 'post') {
-            let observable: Observable<BaseResponse<R>>;
+            let observable: Observable<BaseResponse>;
+            let options = {
+                ...option.params ? {
+                    params: option.api.convertParams(option.params)
+                } : {},
+                responseType: option.api['responseType'],
+                withCredentials: true
+            };
             if (option.api.type === 'get') {
-                observable = this.httpClient.get<BaseResponse<R>>(option.api.url, {
-                    ...option.params ? {
-                        params: option.api.convertParams(option.params)
-                    } : {},
-                    withCredentials: true
-                });
+                observable = this.httpClient.get<BaseResponse<R>>(option.api.url, options);
             } else if (option.api.type === 'post') {
                 observable = this.httpClient.post<BaseResponse<R>>(option.api.url,
-                    option.body ? option.api.convertBody(option.body) : {}, {
-                        ...option.params ? {
-                            params: option.api.convertParams(option.params)
-                        } : {},
-                        withCredentials: true
-                    });
+                    option.body ? option.api.convertBody(option.body) : {}, options);
             }
             return observable.pipe(
                 tap(() => {
                 }, res => {
+                    debugger;
                     this.snackBar.open(res.message, '关闭', {
                         duration: 2000,
                     });
                 }),
-                filter(res => {
-                    if (!res || res.status) {
-                        return true;
-                    }
-                    this.snackBar.open(res.messages, '关闭', {
-                        duration: 2000,
-                    });
-                    return false;
-                }),
-                map(res => option.api.convertResult(res && res.data)),
+                filter(res => option.api.filterResult(res)),
+                map(res => option.api.convertResult(res)),
             );
         } else {
             let url = option.api.url;

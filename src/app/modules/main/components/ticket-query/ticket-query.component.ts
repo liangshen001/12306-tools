@@ -15,6 +15,8 @@ import {QueryStationNameApi} from '../../../../services/api/query-station-name.a
 import {CaptchaImage64Api} from '../../../../services/api/captcha-image64.api';
 import {TicketZResult} from '../../../../models/ticket-z.result';
 import {NgxElectronService} from '@ngx-electron/core';
+import {LeftTicketInitApi} from '../../../../services/api/left-ticket-init.api';
+import {CookieService} from 'ngx-cookie';
 
 
 export const _filter = (opt: StationResult[], value: string): StationResult[] => {
@@ -64,16 +66,20 @@ export class TicketQueryComponent implements OnInit {
                 private queryTicketPriceFLApi: QueryTicketPriceFLApi,
                 private queryStationNameApi: QueryStationNameApi,
                 private captchaImage64Api: CaptchaImage64Api,
+                private leftTicketInitApi: LeftTicketInitApi,
+                private cookieService: CookieService,
                 private _formBuilder: FormBuilder) {
     }
 
     ngOnInit() {
-        let win = this.ngxElectronService.createWindow('verification-code', 'verification-code', {
-            width: 300,
-            height: 200,
-            title: '验证码'
-        });
-
+        // this.apiService.request({
+        //     api: this.leftTicketInitApi
+        // }).subscribe();
+        // let win = this.ngxElectronService.createWindow('verification-code', 'verification-code', {
+        //     width: 300,
+        //     height: 200,
+        //     title: '验证码'
+        // });
         this.dataSource.sort = this.sort;
         this.apiService.request({
             api: this.queryStationNameApi
@@ -102,16 +108,18 @@ export class TicketQueryComponent implements OnInit {
                     map(value => this._filterGroup(stationGroups, value))
                 );
 
-            let paramsStr = localStorage.getItem('TicketQueryComponent-params');
-            if (paramsStr) {
-                let params = JSON.parse(paramsStr);
-                let fromStationName = stations.find(station => station.code === params['leftTicketDTO.from_station']).name;
-                this.fromStationInput.setValue(fromStationName);
-                let toStationName = stations.find(station => station.code === params['leftTicketDTO.to_station']).name;
-                this.toStationInput.setValue(toStationName);
-                this.form.controls['leftTicketDTO.train_date'].setValue(moment(params['leftTicketDTO.train_date']));
-                this.form.controls['leftTicketDTO.from_station'].setValue(params['leftTicketDTO.from_station']);
-                this.form.controls['leftTicketDTO.to_station'].setValue(params['leftTicketDTO.to_station']);
+            if (this.cookieService.get('_jc_save_fromDate')) {
+                let fromDate = this.cookieService.get('_jc_save_fromDate');
+                let toDate = this.cookieService.get('_jc_save_toDate');
+                let fromStation = this.cookieService.get('_jc_save_fromStation');
+                let toStation = this.cookieService.get('_jc_save_toStation');
+                let fromStationArr = unescape(fromStation).split(',');
+                let toStationArr = unescape(toStation).split(',');
+                this.form.controls['leftTicketDTO.train_date'].patchValue(moment(fromDate));
+                this.form.controls['leftTicketDTO.from_station'].patchValue(fromStationArr[1]);
+                this.form.controls['leftTicketDTO.to_station'].patchValue(toStationArr[1]);
+                this.fromStationInput.patchValue(fromStationArr[0]);
+                this.toStationInput.patchValue(toStationArr[0]);
                 setTimeout(() => this.changeDetectorRef.detectChanges());
             }
         });
@@ -137,11 +145,10 @@ export class TicketQueryComponent implements OnInit {
             'purpose_codes': 'ADULT'
         };
 
-        return this.apiService.request({
+        this.apiService.request({
             api: this.queryZApi,
             params
         }).subscribe((data) => {
-            localStorage.setItem('TicketQueryComponent-params', JSON.stringify(params));
             this.dataSource.data = data;
             this.loading = false;
         });

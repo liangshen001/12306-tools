@@ -14,13 +14,12 @@ function init() {
         title: '12306-tools'
     });
     win.on('close', () => app.quit());
-
-    session.defaultSession.cookies.set({
-        url: 'https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date=2020-01-22&leftTicketDTO.from_station=BJP&leftTicketDTO.to_station=TLT&purpose_codes=ADULT',
-        domain: 'kyfw.12306.cn',
-        name: 'JSESSIONID',
-        value: '0DEA7DFDB5BC4188E581949740E67D66'
-    });
+    // session.defaultSession.cookies.set({
+    //     url: 'https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date=2020-01-22&leftTicketDTO.from_station=BJP&leftTicketDTO.to_station=TLT&purpose_codes=ADULT',
+    //     domain: 'kyfw.12306.cn',
+    //     name: 'JSESSIONID',
+    //     value: '0DEA7DFDB5BC4188E581949740E67D66'
+    // });
 }
 
 

@@ -2,6 +2,7 @@ import {HttpGetApi} from './api';
 import {Injectable} from '@angular/core';
 import {QueryTicketPriceParams} from '../../models/query-ticket-price.params';
 import {QueryTicketPriceResult} from '../../models/query-ticket-price.result';
+import {BaseResponse} from '../../models/base-response';
 
 /**
  * 查询票价
@@ -11,8 +12,8 @@ export class QueryTicketPriceApi extends HttpGetApi<QueryTicketPriceParams, Quer
     constructor() {
         super('https://kyfw.12306.cn/otn/leftTicket/queryTicketPrice');
     }
-    convertResult(result: QueryTicketPriceResult): QueryTicketPriceResult {
-        return result;
+    convertResult(result: BaseResponse<QueryTicketPriceResult>): QueryTicketPriceResult {
+        return result.data;
     }
 
     convertParams(params: QueryTicketPriceParams) {

@@ -7,6 +7,7 @@ import {TicketQueryComponent} from './components/ticket-query/ticket-query.compo
 const routes: Routes = [{
     path: '',
     component: IndexComponent,
+
     children: [{
         path: '',
         pathMatch: 'full',
