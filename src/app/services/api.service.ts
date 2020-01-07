@@ -51,21 +51,21 @@ export class ApiService {
             );
         } else {
             let url = option.api.url;
-            let params = option.api.convertParams(option.params);
-            if (params) {
-                if (!url.includes('?')) {
-                    url += '?';
-                } else {
-                    if (!url.endsWith('&')) {
-                        url += '&';
-                    }
-                }
-                Object.keys(params).forEach(key => {
-                    url += key + '=' + params[key] + '&';
-                });
-                url = url.slice(0, -1);
-            }
             if (option.api.type === 'script') {
+                let params = option.api.convertParams(option.params);
+                if (params) {
+                    if (!url.includes('?')) {
+                        url += '?';
+                    } else {
+                        if (!url.endsWith('&')) {
+                            url += '&';
+                        }
+                    }
+                    Object.keys(params).forEach(key => {
+                        url += key + '=' + params[key] + '&';
+                    });
+                    url = url.slice(0, -1);
+                }
                 return this.scriptService.loadScript(url)
                     .pipe(
                         map(() => option.api.convertResult()),
@@ -76,6 +76,9 @@ export class ApiService {
                         })
                     );
             } else if (option.api.type === 'jsonp') {
+                this.httpClient.request('JSONP', url, {
+                    params: option.params ? option.params : {}
+                });
                 return this.httpClient.jsonp<R>(url, 'callback');
             }
         }

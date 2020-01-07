@@ -18,7 +18,7 @@ const routes: Routes = [
         path: 'main',
         loadChildren: './modules/main/main.module#MainModule',
         canActivateChild: [
-            // LoginConfGuard
+            LoginConfGuard
         ]
     }, {
         path: 'verification-code',

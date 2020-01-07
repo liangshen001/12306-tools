@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from '../../../../services/api.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {StationResult} from '../../../../models/station.result';
 import {StationGroup} from '../../models/station-group';
@@ -17,6 +17,7 @@ import {TicketZResult} from '../../../../models/ticket-z.result';
 import {NgxElectronService} from '@ngx-electron/core';
 import {LeftTicketInitApi} from '../../../../services/api/left-ticket-init.api';
 import {CookieService} from 'ngx-cookie';
+import {LogdeviceApi} from '../../../../services/api/logdevice.api';
 
 
 export const _filter = (opt: StationResult[], value: string): StationResult[] => {
@@ -50,7 +51,8 @@ export class TicketQueryComponent implements OnInit {
     fromStationGroupOptions: Observable<StationGroup[]>;
     toStationGroupOptions: Observable<StationGroup[]>;
 
-    displayedColumns = ['train', 'fromAndToStationName', 'fromAndToStationTime', 'take', 'businessClass', 'firstClass', 'secondClass', 'advancedSoftSleeper', 'softSleeper', 'moveSleeper', 'hardSleeper', 'softClass', 'hardClass', 'noSeat', 'others', 'remarks'];
+    displayedColumns = ['train', 'fromAndToStationName', 'fromAndToStationTime', 'take', 'businessClass', 'firstClass', 'secondClass',
+        'advancedSoftSleeper', 'softSleeper', 'moveSleeper', 'hardSleeper', 'softClass', 'hardClass', 'noSeat', 'others', 'remarks'];
 
     dataSource = new MatTableDataSource();
     @ViewChild(MatSort, {static: false})
@@ -65,8 +67,8 @@ export class TicketQueryComponent implements OnInit {
                 private queryTicketPriceApi: QueryTicketPriceApi,
                 private queryTicketPriceFLApi: QueryTicketPriceFLApi,
                 private queryStationNameApi: QueryStationNameApi,
-                private captchaImage64Api: CaptchaImage64Api,
                 private leftTicketInitApi: LeftTicketInitApi,
+                private logdeviceApi: LogdeviceApi,
                 private cookieService: CookieService,
                 private _formBuilder: FormBuilder) {
     }
@@ -111,15 +113,28 @@ export class TicketQueryComponent implements OnInit {
             if (this.cookieService.get('_jc_save_fromDate')) {
                 let fromDate = this.cookieService.get('_jc_save_fromDate');
                 let toDate = this.cookieService.get('_jc_save_toDate');
-                let fromStation = this.cookieService.get('_jc_save_fromStation');
-                let toStation = this.cookieService.get('_jc_save_toStation');
-                let fromStationArr = unescape(fromStation).split(',');
-                let toStationArr = unescape(toStation).split(',');
+                let fromStation = unescape(this.cookieService.get('_jc_save_fromStation'));
+                let toStation = unescape(this.cookieService.get('_jc_save_toStation'));
+                let fromStationArr = fromStation.split(',');
+                let toStationArr = toStation.split(',');
                 this.form.controls['leftTicketDTO.train_date'].patchValue(moment(fromDate));
                 this.form.controls['leftTicketDTO.from_station'].patchValue(fromStationArr[1]);
                 this.form.controls['leftTicketDTO.to_station'].patchValue(toStationArr[1]);
                 this.fromStationInput.patchValue(fromStationArr[0]);
                 this.toStationInput.patchValue(toStationArr[0]);
+                this.apiService.request({
+                    api: this.leftTicketInitApi,
+                    params: {
+                        fs: fromStation,
+                        ts: toStation,
+                        date: fromDate
+                    }
+                }).subscribe(() => {
+                    this.apiService.request({
+                        api: this.logdeviceApi
+                    }).subscribe(() => {
+                    });
+                });
                 setTimeout(() => this.changeDetectorRef.detectChanges());
             }
         });

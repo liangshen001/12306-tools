@@ -14,9 +14,9 @@ export class AppComponent {
     constructor(private getLoginBannerApi: GetLoginBannerApi,
                 private apiService: ApiService) {
         // 接口会设置cookie信息
-        apiService.request({
-            api: getLoginBannerApi
-        }).subscribe();
+        // apiService.request({
+        //     api: getLoginBannerApi
+        // }).subscribe();
     }
 
 }

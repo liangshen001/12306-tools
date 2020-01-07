@@ -59,6 +59,7 @@ import {LoginConfApi} from './services/api/login-conf.api';
 import {LeftTicketInitApi} from './services/api/left-ticket-init.api';
 import {GetLoginBannerApi} from './services/api/get-login-banner.api';
 import {CookieModule} from 'ngx-cookie';
+import {LogdeviceApi} from './services/api/logdevice.api';
 
 
 export const materialModules = [
@@ -140,6 +141,7 @@ export const materialModules = [
         LoginConfApi,
         LeftTicketInitApi,
         GetLoginBannerApi,
+        LogdeviceApi,
         {provide: HTTP_INTERCEPTORS, useClass: CommonInterceptor, multi: true}
     ],
     bootstrap: [AppComponent]

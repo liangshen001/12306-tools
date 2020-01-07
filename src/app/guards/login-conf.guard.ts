@@ -16,7 +16,6 @@ export class LoginConfGuard implements CanActivateChild {
     canActivateChild(
         next: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-        debugger;
         return this.apiService.request({
             api: this.loginConfApi
         }).pipe(
