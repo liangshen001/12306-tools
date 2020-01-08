@@ -11,13 +11,14 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {QueryZApi} from '../../../../services/api/query-z.api';
 import {QueryTicketPriceApi} from '../../../../services/api/query-ticket-price.api';
 import {QueryTicketPriceFLApi} from '../../../../services/api/query-ticket-price-f-l.api';
-import {QueryStationNameApi} from '../../../../services/api/query-station-name.api';
+import {QueryStationApi} from '../../../../services/api/query-station.api';
 import {CaptchaImage64Api} from '../../../../services/api/captcha-image64.api';
 import {TicketZResult} from '../../../../models/ticket-z.result';
 import {NgxElectronService} from '@ngx-electron/core';
 import {LeftTicketInitApi} from '../../../../services/api/left-ticket-init.api';
 import {CookieService} from 'ngx-cookie';
 import {LogdeviceApi} from '../../../../services/api/logdevice.api';
+import {GetLoginBannerApi} from '../../../../services/api/get-login-banner.api';
 
 
 export const _filter = (opt: StationResult[], value: string): StationResult[] => {
@@ -66,22 +67,22 @@ export class TicketQueryComponent implements OnInit {
                 private queryZApi: QueryZApi,
                 private queryTicketPriceApi: QueryTicketPriceApi,
                 private queryTicketPriceFLApi: QueryTicketPriceFLApi,
-                private queryStationNameApi: QueryStationNameApi,
+                private queryStationNameApi: QueryStationApi,
+                private getLoginBannerApi: GetLoginBannerApi,
                 private leftTicketInitApi: LeftTicketInitApi,
                 private logdeviceApi: LogdeviceApi,
-                private cookieService: CookieService,
                 private _formBuilder: FormBuilder) {
     }
 
     ngOnInit() {
-        // this.apiService.request({
-        //     api: this.leftTicketInitApi
-        // }).subscribe();
-        // let win = this.ngxElectronService.createWindow('verification-code', 'verification-code', {
-        //     width: 300,
-        //     height: 200,
-        //     title: '验证码'
-        // });
+        this.apiService.request({
+            api: this.getLoginBannerApi
+        }).subscribe(() => {
+            this.apiService.request({
+                api: this.logdeviceApi
+            }).subscribe(() => {
+            });
+        });
         this.dataSource.sort = this.sort;
         this.apiService.request({
             api: this.queryStationNameApi
@@ -109,12 +110,18 @@ export class TicketQueryComponent implements OnInit {
                     startWith(''),
                     map(value => this._filterGroup(stationGroups, value))
                 );
-
-            if (this.cookieService.get('_jc_save_fromDate')) {
-                let fromDate = this.cookieService.get('_jc_save_fromDate');
-                let toDate = this.cookieService.get('_jc_save_toDate');
-                let fromStation = unescape(this.cookieService.get('_jc_save_fromStation'));
-                let toStation = unescape(this.cookieService.get('_jc_save_toStation'));
+            let cookies = this.ngxElectronService.remote.session.defaultSession.cookies;
+            cookies.get({
+                domain: 'kyfw.12306.cn'
+            }).then(items => {
+            debugger;
+                if (!items.some(item => item.name === '_jc_save_fromDate')) {
+                    return;
+                }
+                let fromDate = items.find(item => item.name === '_jc_save_fromDate').value;
+                let toDate = items.find(item => item.name === '_jc_save_toDate').value;
+                let fromStation = unescape(items.find(item => item.name === '_jc_save_fromStation').value);
+                let toStation = unescape(items.find(item => item.name === '_jc_save_toStation').value);
                 let fromStationArr = fromStation.split(',');
                 let toStationArr = toStation.split(',');
                 this.form.controls['leftTicketDTO.train_date'].patchValue(moment(fromDate));
@@ -122,21 +129,8 @@ export class TicketQueryComponent implements OnInit {
                 this.form.controls['leftTicketDTO.to_station'].patchValue(toStationArr[1]);
                 this.fromStationInput.patchValue(fromStationArr[0]);
                 this.toStationInput.patchValue(toStationArr[0]);
-                this.apiService.request({
-                    api: this.leftTicketInitApi,
-                    params: {
-                        fs: fromStation,
-                        ts: toStation,
-                        date: fromDate
-                    }
-                }).subscribe(() => {
-                    this.apiService.request({
-                        api: this.logdeviceApi
-                    }).subscribe(() => {
-                    });
-                });
                 setTimeout(() => this.changeDetectorRef.detectChanges());
-            }
+            });
         });
     }
 

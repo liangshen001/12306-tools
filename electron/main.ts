@@ -1,4 +1,4 @@
-import {app, BrowserWindow, session} from 'electron';
+import {app, BrowserWindow, ipcMain, session} from 'electron';
 import {createTray, createWindow, initElectronMainIpcListener, isMac} from '@ngx-electron/main';
 
 let win: BrowserWindow;
@@ -14,12 +14,6 @@ function init() {
         title: '12306-tools'
     });
     win.on('close', () => app.quit());
-    // session.defaultSession.cookies.set({
-    //     url: 'https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date=2020-01-22&leftTicketDTO.from_station=BJP&leftTicketDTO.to_station=TLT&purpose_codes=ADULT',
-    //     domain: 'kyfw.12306.cn',
-    //     name: 'JSESSIONID',
-    //     value: '0DEA7DFDB5BC4188E581949740E67D66'
-    // });
 }
 
 

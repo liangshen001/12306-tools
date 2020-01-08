@@ -1,3 +1,5 @@
 <ngx-electron-window [showCloseBtn]="true" [showMiniBtn]="true" [background]="'white'">
-    <img [src]="base64">
+    <header></header>
+    <app-code #code></app-code>
+    <button mat-button [disabled]="!code.points.length" (click)="send()">SEND</button>
 </ngx-electron-window>

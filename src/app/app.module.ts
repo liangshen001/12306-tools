@@ -1,4 +1,3 @@
-import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -45,21 +44,29 @@ import {
     MatRippleModule,
     MatSelectModule,
     MatSidenavModule,
-    MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule,
-    MatStepperModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatTreeModule
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatSortModule,
+    MatStepperModule,
+    MatTableModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    MatTreeModule
 } from '@angular/material';
 import {PortalModule} from '@angular/cdk/portal';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {QueryZApi} from './services/api/query-z.api';
 import {QueryTicketPriceApi} from './services/api/query-ticket-price.api';
-import {QueryStationNameApi} from './services/api/query-station-name.api';
+import {QueryStationApi} from './services/api/query-station.api';
 import {QueryTicketPriceFLApi} from './services/api/query-ticket-price-f-l.api';
 import {CaptchaImage64Api} from './services/api/captcha-image64.api';
 import {LoginConfApi} from './services/api/login-conf.api';
 import {LeftTicketInitApi} from './services/api/left-ticket-init.api';
 import {GetLoginBannerApi} from './services/api/get-login-banner.api';
-import {CookieModule} from 'ngx-cookie';
 import {LogdeviceApi} from './services/api/logdevice.api';
+import {QueryFavoriteStationApi} from './services/api/query-favorite-station-api';
 
 
 export const materialModules = [
@@ -127,7 +134,6 @@ export const materialModules = [
             }
         }),
         EffectsModule.forRoot(effects),
-        CookieModule.forRoot(),
         BrowserAnimationsModule
     ],
     providers: [
@@ -135,13 +141,14 @@ export const materialModules = [
         ScriptService,
         QueryZApi,
         QueryTicketPriceApi,
-        QueryStationNameApi,
+        QueryStationApi,
         QueryTicketPriceFLApi,
         CaptchaImage64Api,
         LoginConfApi,
         LeftTicketInitApi,
         GetLoginBannerApi,
         LogdeviceApi,
+        QueryFavoriteStationApi,
         {provide: HTTP_INTERCEPTORS, useClass: CommonInterceptor, multi: true}
     ],
     bootstrap: [AppComponent]

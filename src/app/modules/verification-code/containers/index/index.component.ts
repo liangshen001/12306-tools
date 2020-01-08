@@ -1,6 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from '../../../../services/api.service';
 import {CaptchaImage64Api} from '../../../../services/api/captcha-image64.api';
+import {NgxElectronService} from '@ngx-electron/core';
+import {CodeComponent} from '../../components/code/code.component';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
     selector: 'app-index',
@@ -9,19 +12,20 @@ import {CaptchaImage64Api} from '../../../../services/api/captcha-image64.api';
 })
 export class IndexComponent implements OnInit {
 
-    base64: string;
+    @ViewChild(CodeComponent, {static: false})
+    code: CodeComponent;
 
     constructor(private apiService: ApiService,
+                private ngxElectronService: NgxElectronService,
+                private snackBar: MatSnackBar,
                 private captchaImage64Api: CaptchaImage64Api) {
     }
 
     ngOnInit() {
-
-        this.apiService.request({
-            api: this.captchaImage64Api
-        }).subscribe(data => {
-            this.base64 = 'data:image/jpg;base64,' + data.image;
-        });
     }
 
+    send() {
+        this.ngxElectronService.send(this.code.points, 'main');
+        this.ngxElectronService.remote.getCurrentWindow().close();
+    }
 }

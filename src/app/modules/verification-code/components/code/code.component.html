@@ -1,0 +1,13 @@
+
+<div class="touclick-wrapper">
+    <div class="lgcode-refresh" (click)="refreshCode()"></div>
+    <div class="loginImg">
+        <img class="imgCode lgcode-image" [src]="base64">
+    </div>
+    <div class="J-passCodeCoin">
+        <div *ngFor="let point of points; let i = index" class="lgcode-active lgcode-image"
+             [style.left]="point.x - 13 + 'px'"
+             [style.top]="point.y - 13 + 'px'"
+             (click)="removeSelf(i);$event.stopPropagation()"></div>
+    </div>
+</div>

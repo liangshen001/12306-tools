@@ -1,0 +1,59 @@
+.lgcode-2018 {
+    position: relative;
+    border: none;
+    width: 300px;
+    height: 188px;
+    margin: 0 10px;
+    -wekbit-box-sizing: content-box;
+    -o-box-sizing: content-box;
+    -ms-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+}
+.touclick-wrapper {
+    position: relative;
+    border: none;
+    width: 300px;
+    height: 188px;
+    margin: 0 10px;
+    -wekbit-box-sizing: content-box;
+    -o-box-sizing: content-box;
+    -ms-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+}
+.lgcode-refresh {
+    position: absolute;
+    z-index: 2;
+    right: 2px;
+    left: auto;
+    top: 2px;
+    cursor: pointer;
+    width: 53px;
+    height: 25px;
+    background-position: 0 0;
+}
+.imgCode {
+    width: 300px;
+    height: 188px;
+}
+.loginImg {
+    position: absolute;
+    z-index: 1;
+    width: 300px;
+    height: 188px;
+}
+
+.lgcode-image {
+    background: url("../../../../../assets/images/login/captcha.png");
+    background-repeat: no-repeat;
+}
+// 选择
+.lgcode-active {
+    position: absolute;
+    z-index: 3;
+    background-position: 0 -96px;
+    width: 27px;
+    height: 27px;
+    font-size: 0;
+}

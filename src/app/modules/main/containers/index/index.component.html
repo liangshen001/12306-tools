@@ -4,7 +4,7 @@
     <div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
         <mat-toolbar color="primary" class="example-toolbar " style="-webkit-app-region: drag;">
             <button mat-icon-button (click)="snav.toggle()" style="-webkit-app-region: no-drag;"><mat-icon style="-webkit-app-region: no-drag;">menu</mat-icon></button>
-            <h1 class="example-app-name">App</h1>
+            <h1 class="example-app-name">12306</h1>
         </mat-toolbar>
 
         <mat-sidenav-container class="example-sidenav-container"
@@ -13,6 +13,7 @@
                          [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
                 <mat-nav-list>
                     <a mat-list-item routerLink="./ticket-query">车票查询</a>
+                    <a mat-list-item (click)="openCode()">登录</a>
                 </mat-nav-list>
             </mat-sidenav>
 
