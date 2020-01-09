@@ -16,9 +16,9 @@ import {CaptchaImage64Api} from '../../../../services/api/captcha-image64.api';
 import {TicketZResult} from '../../../../models/ticket-z.result';
 import {NgxElectronService} from '@ngx-electron/core';
 import {LeftTicketInitApi} from '../../../../services/api/left-ticket-init.api';
-import {CookieService} from 'ngx-cookie';
 import {LogdeviceApi} from '../../../../services/api/logdevice.api';
 import {GetLoginBannerApi} from '../../../../services/api/get-login-banner.api';
+import {LoginConfApi} from '../../../../services/api/login-conf.api';
 
 
 export const _filter = (opt: StationResult[], value: string): StationResult[] => {
@@ -56,6 +56,7 @@ export class TicketQueryComponent implements OnInit {
         'advancedSoftSleeper', 'softSleeper', 'moveSleeper', 'hardSleeper', 'softClass', 'hardClass', 'noSeat', 'others', 'remarks'];
 
     dataSource = new MatTableDataSource();
+
     @ViewChild(MatSort, {static: false})
     sort: MatSort;
 
@@ -71,17 +72,18 @@ export class TicketQueryComponent implements OnInit {
                 private getLoginBannerApi: GetLoginBannerApi,
                 private leftTicketInitApi: LeftTicketInitApi,
                 private logdeviceApi: LogdeviceApi,
+                private loginConfApi: LoginConfApi,
                 private _formBuilder: FormBuilder) {
     }
 
     ngOnInit() {
         this.apiService.request({
-            api: this.getLoginBannerApi
-        }).subscribe(() => {
-            this.apiService.request({
-                api: this.logdeviceApi
-            }).subscribe(() => {
-            });
+            api: this.loginConfApi
+        }).subscribe(data => {
+            console.log(data);
+            // this.apiService.request({
+            //     api: this.logdeviceApi
+            // }).subscribe();
         });
         this.dataSource.sort = this.sort;
         this.apiService.request({
@@ -111,10 +113,24 @@ export class TicketQueryComponent implements OnInit {
                     map(value => this._filterGroup(stationGroups, value))
                 );
             let cookies = this.ngxElectronService.remote.session.defaultSession.cookies;
+            // cookies.get(
+            //     {url: 'https://kyfw.12306.cn'}
+            // ).then(items => {
+            //     debugger;
+            //     console.log(items);
+            //     // 删除cookie需要循环remove
+            //     for (let i = 0; i < items.length; i++) {
+            //         // 删除cookie
+            //         cookies.remove(
+            //             'https://kyfw.12306.cn/index/otn/login/conf',
+            //             items[i].name
+            //         );
+            //     }
+            // });
             cookies.get({
-                domain: 'kyfw.12306.cn'
+                domain: '12306.cn'
             }).then(items => {
-            debugger;
+                debugger;
                 if (!items.some(item => item.name === '_jc_save_fromDate')) {
                     return;
                 }
@@ -146,6 +162,7 @@ export class TicketQueryComponent implements OnInit {
         if (!this.form.valid) {
             return;
         }
+
         this.loading = true;
         let params = {
             'leftTicketDTO.train_date': this.form.getRawValue()['leftTicketDTO.train_date'].format('YYYY-MM-DD'),
@@ -153,6 +170,32 @@ export class TicketQueryComponent implements OnInit {
             'leftTicketDTO.to_station': this.form.getRawValue()['leftTicketDTO.to_station'],
             'purpose_codes': 'ADULT'
         };
+
+        // let cookies = this.ngxElectronService.remote.session.defaultSession.cookies;
+        // cookies.set({
+        //     url: 'https://kyfw.12306.cn',
+        //     domain: 'kyfw.12306.cn',
+        //     name: '_jc_save_fromDate',
+        //     value: params['leftTicketDTO.train_date']
+        // });
+        // cookies.set({
+        //     url: 'https://kyfw.12306.cn',
+        //     domain: 'kyfw.12306.cn',
+        //     name: '_jc_save_toDate',
+        //     value: params['leftTicketDTO.train_date']
+        // });
+        // cookies.set({
+        //     url: 'https://kyfw.12306.cn',
+        //     domain: 'kyfw.12306.cn',
+        //     name: '_jc_save_fromStation',
+        //     value: this.fromStationInput.value + ',' + params['leftTicketDTO.from_station']
+        // });
+        // cookies.set({
+        //     url: 'https://kyfw.12306.cn',
+        //     domain: 'kyfw.12306.cn',
+        //     name: '_jc_save_toStation',
+        //     value: this.toStationInput.value + ',' + params['leftTicketDTO.to_station']
+        // });
 
         this.apiService.request({
             api: this.queryZApi,
@@ -183,13 +226,14 @@ export class TicketQueryComponent implements OnInit {
                 this.apiService.request({
                     api: this.queryTicketPriceFLApi,
                     params
-                }).subscribe();
-                this.apiService.request({
-                    api: this.queryTicketPriceApi,
-                    params
-                }).subscribe(data => {
-                    element['price'] = data;
-                    element['expanded'] = true;
+                }).subscribe(() => {
+                    this.apiService.request({
+                        api: this.queryTicketPriceApi,
+                        params
+                    }).subscribe(data => {
+                        element['price'] = data;
+                        element['expanded'] = true;
+                    });
                 });
             }
         } else {

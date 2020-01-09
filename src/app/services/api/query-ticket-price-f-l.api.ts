@@ -9,7 +9,7 @@ import {QueryTicketPriceApi} from './query-ticket-price.api';
 export class QueryTicketPriceFLApi extends HttpGetApi<any, void> {
 
     constructor(private queryTicketPriceApi: QueryTicketPriceApi) {
-        super('https://kyfw.12306.cn/otn/leftTicket/queryTicketPriceFL');
+        super('https://kyfw.12306.cn/otn/leftTicket/queryTicketPriceFL', 'text');
     }
 
     convertParams(params: any): any {
@@ -17,6 +17,10 @@ export class QueryTicketPriceFLApi extends HttpGetApi<any, void> {
     }
     // 此接口会返回null 不作转换 接口作用不明
     convertResult(): void {
+    }
+
+    filterResult() {
+        return true;
     }
 
 }

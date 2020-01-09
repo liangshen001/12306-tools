@@ -23,11 +23,12 @@ export class ApiService {
         params?: P;
         body?: B;
     }): Observable<R> {
+        let params = option.api.convertParams(option.params);
+        let observable: Observable<any>;
         if (option.api.type === 'get' || option.api.type === 'post') {
-            let observable: Observable<BaseResponse>;
             let options = {
-                ...option.params ? {
-                    params: option.api.convertParams(option.params)
+                ...params ? {
+                    params: params
                 } : {},
                 responseType: option.api['responseType'],
                 withCredentials: true
@@ -35,24 +36,13 @@ export class ApiService {
             if (option.api.type === 'get') {
                 observable = this.httpClient.get<BaseResponse<R>>(option.api.url, options);
             } else if (option.api.type === 'post') {
+                let body = option.api.convertBody(option.body);
                 observable = this.httpClient.post<BaseResponse<R>>(option.api.url,
-                    option.body ? option.api.convertBody(option.body) : {}, options);
+                    body ? body : {}, options);
             }
-            return observable.pipe(
-                tap(() => {
-                }, res => {
-                    debugger;
-                    this.snackBar.open(res.message, '关闭', {
-                        duration: 2000,
-                    });
-                }),
-                filter(res => option.api.filterResult(res)),
-                map(res => option.api.convertResult(res)),
-            );
         } else {
             let url = option.api.url;
             if (option.api.type === 'script') {
-                let params = option.api.convertParams(option.params);
                 if (params) {
                     if (!url.includes('?')) {
                         url += '?';
@@ -66,22 +56,25 @@ export class ApiService {
                     });
                     url = url.slice(0, -1);
                 }
-                return this.scriptService.loadScript(url)
-                    .pipe(
-                        map(() => option.api.convertResult()),
-                        tap(() => {}, () => {
-                            this.snackBar.open('调用接口失败api: ' + JSON.stringify(option.api), '关闭', {
-                                duration: 2000,
-                            });
-                        })
-                    );
+                observable = this.scriptService.loadScript(url);
             } else if (option.api.type === 'jsonp') {
                 this.httpClient.request('JSONP', url, {
-                    params: option.params ? option.params : {}
+                    params: params ? params : {}
                 });
-                return this.httpClient.jsonp<R>(url, 'callback');
+                observable = this.httpClient.jsonp<R>(url, 'callback');
             }
         }
+
+        return observable.pipe(
+            tap(() => {
+            }, res => {
+                this.snackBar.open(res.message, '关闭', {
+                    duration: 2000,
+                });
+            }),
+            filter(res => option.api.filterResult(res)),
+            map(res => option.api.convertResult(res)),
+        );
     }
 
 }

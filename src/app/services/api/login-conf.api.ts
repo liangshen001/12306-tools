@@ -2,14 +2,15 @@ import {HttpGetApi, HttpPostApi} from './api';
 import {Injectable} from '@angular/core';
 import {LoginConfResult} from '../../models/login-conf.result';
 import {BaseResponse} from '../../models/base-response';
+import {NgxElectronService} from '@ngx-electron/core';
 
 /**
  * 查看登录配置
  */
 @Injectable()
 export class LoginConfApi extends HttpPostApi<void, void, any> {
-    constructor() {
-        super('https://www.12306.cn/index/otn/login/conf');
+    constructor(private ngxElectronService: NgxElectronService) {
+        super('https://kyfw.12306.cn/index/otn/login/conf');
     }
     convertResult(res: BaseResponse<{
         is_login: 'N' | 'Y';
@@ -22,6 +23,12 @@ export class LoginConfApi extends HttpPostApi<void, void, any> {
         other_control: number;
         studentDate: string[];
     }>): LoginConfResult {
+        let cookies = this.ngxElectronService.remote.session.defaultSession.cookies;
+        cookies.get({
+            domain: '12306.cn'
+        }).then(items => {
+            debugger;
+        });
         let result = res.data;
         return {
             isLogin: result.is_login === 'Y',
@@ -37,8 +44,15 @@ export class LoginConfApi extends HttpPostApi<void, void, any> {
     }
     // 接口参数
     convertParams(): void {
-    }
-    convertBody(body: any): void {
+
+        let cookies = this.ngxElectronService.remote.session.defaultSession.cookies;
+        cookies.get({
+            domain: '12306.cn'
+        }).then(items => {
+            debugger;
+        });
     }
 
+    convertBody(body: void): any {
+    }
 }

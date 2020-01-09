@@ -2,6 +2,7 @@ import {Api, HttpGetApi} from './api';
 import {Injectable} from '@angular/core';
 import {TicketZResult} from '../../models/ticket-z.result';
 import {BaseResponse} from '../../models/base-response';
+import {NgxElectronService} from '@ngx-electron/core';
 
 
 /**
@@ -10,7 +11,7 @@ import {BaseResponse} from '../../models/base-response';
 @Injectable()
 export class QueryZApi extends HttpGetApi<any, TicketZResult[]> {
 
-    constructor() {
+    constructor(private ngxElectronService: NgxElectronService) {
         super('https://kyfw.12306.cn/otn/leftTicket/queryZ');
     }
 
@@ -28,6 +29,13 @@ export class QueryZApi extends HttpGetApi<any, TicketZResult[]> {
         map: any;
         result: string[];
     }>): TicketZResult[] {
+
+        let cookies = this.ngxElectronService.remote.session.defaultSession.cookies;
+        cookies.get({
+            domain: '12306.cn'
+        }).then(items => {
+            debugger;
+        });
         return res.data.result.map(item => {
             let arr = item.split('|');
             let trainDate = arr[13].substr(0, 4) + '-' + arr[13].substr(4, 2) + '-' + arr[13].substr(6);

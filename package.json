@@ -8,7 +8,7 @@
         "ng": "ng",
         "start": "ng serve --port 4200",
         "build": "ng build",
-        "ngx-electron:server-start": "ngx-electron server-start . --hmr",
+        "ngx-electron:server-start": "ngx-electron server-start . --hmr --host 127.0.0.1",
         "ngx-electron:local-start": "ngx-electron local-start .",
         "ngx-electron:build:win": "ngx-electron build . -w --configuration production",
         "ngx-electron:build:mac": "ngx-electron build . -m --configuration production",
